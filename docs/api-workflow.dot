@@ -1,0 +1,55 @@
+digraph {
+    label="Planned Custom Term/Theme API Workflow (2016-06)";
+    subgraph cluster_01 {
+        node [style=filled, color=black];
+        "Conceptual"[shape=pentagon, fillcolor=white];
+        "Command Line"[style=filled, fillcolor=grey];
+        "Browser"[style=filled, fillcolor=white];
+        label="Key";
+    }
+
+    start -> upmeta [label="Alternate metadata"];
+    start -> upfile [label="Alternate XML source"];
+    upmeta -> start;
+    upfile -> start;
+
+
+    start -> parse [label="All data present"];
+    parse -> verify;
+    verify -> identify [label="Term definitions missing"];
+    identify -> module [label="First new term"];
+    identify -> addterm [label="New terms after the first"];
+    module -> setuppy;
+    setuppy -> addterm;
+    addterm -> parse;
+
+    verify -> parselive [label="Verified"];
+    parselive -> siterebuildlive;
+    siterebuildlive -> live;
+
+    verify -> themeneed [label="Theme not correct"];
+    themeneed -> cssoverride [label="First theme change"];
+    themeneed -> csstweak [label="Theme changes after the first"];
+    cssoverride -> csstweak;
+    csstweak -> siterebuild;
+    siterebuild -> verify;
+
+
+
+    start[shape=pentagon];
+
+    parse[label="Parse regulation, output to staging server", style=filled];
+    verify[label="Verify regulation on staging server"];
+    identify[label="Identify need for custom term addition", shape=pentagon];
+    module[label="Create eregs_extensions module", style=filled];
+    setuppy[label="Tweak setup.py for eregs_extensions module to fit current project", style=filled];
+    addterm[label="Add term to list in custom Python", style=filled];
+    themeneed[label="Identify need for tweaks to theme of site", shape=pentagon];
+    cssoverride[label="Create CSS file to override CSS file in default theme", style=filled];
+    csstweak[label="Add custom override for CSS", style=filled];
+    siterebuild[label="Rebuild staging server", style=filled];
+    parselive[label="Parse regulation, output to live server", style=filled];
+    siterebuildlive[label="Rebuild site with new CSS, push to live server", style=filled];
+    live[label="Verify theme and custom terms work on live server"];
+
+}

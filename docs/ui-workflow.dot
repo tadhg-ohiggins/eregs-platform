@@ -1,0 +1,38 @@
+digraph {
+    label="Plan for Custom Term/Theme Workflow (2016-06)";
+    subgraph cluster_01 {
+        node [style=filled, color=black];
+        "Conceptual"[shape=pentagon, fillcolor=white];
+        "Command Line"[style=filled, fillcolor=grey];
+        "Browser"[style=filled, fillcolor=white];
+        label="Key";
+    }
+
+    start -> parse;
+    parse -> verify;
+    verify -> identify [label="Term definitions missing"];
+    identify -> addterm
+    addterm;
+    addterm -> parse;
+
+    verify -> parselive [label="Verified"];
+    parselive -> siterebuildlive;
+    siterebuildlive -> live;
+
+    verify -> themeneed [label="Theme not correct"];
+    themeneed -> cssoverride;
+    cssoverride -> verify;
+
+    start[shape=pentagon];
+    parse[label="Parse regulation, output to demo server"];
+    verify[label="Verify regulation on demo server"];
+    identify[label="Identify need for custom term addition", shape=pentagon];
+    addterm[label="Add term to list"];
+    themeneed[label="Identify need for tweaks to theme of site", shape=pentagon];
+    cssoverride[label="Change theme settings"];
+    parselive[label="Parse regulation, output to live server"];
+    siterebuildlive[label="Push theme changes to live server"];
+    live[label="Verify theme and custom terms work on live server"];
+
+}
+
