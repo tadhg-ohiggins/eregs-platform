@@ -1,5 +1,5 @@
 digraph {
-    label="Plan for Custom Term/Theme Workflow (2016-06)";
+    label="Plan for Custom Term/Theme UI Workflow (2016-06)";
     subgraph cluster_01 {
         node [style=filled, color=black];
         "Conceptual"[shape=pentagon, fillcolor=white];
@@ -8,27 +8,39 @@ digraph {
         label="Key";
     }
 
-    start -> parse;
-    parse -> verify;
+    start -> auth;
+    auth -> parse;
+    parse -> wait;
+    wait -> verify;
     verify -> identify [label="Term definitions missing"];
     identify -> addterm
-    addterm;
     addterm -> parse;
 
     verify -> parselive [label="Verified"];
     parselive -> siterebuildlive;
-    siterebuildlive -> live;
+    parselive -> waitlive;
+    siterebuildlive -> waitlive;
+    waitlive -> live;
+    verify -> themedone [label="Theme correct"];
+    themedone -> parselive;
+    verify -> termsadded [label="All terms added"];
+    termsadde -> parselive;
 
-    verify -> themeneed [label="Theme not correct"];
+    verify -> themeneed [label="Theme incorrect"];
     themeneed -> cssoverride;
     cssoverride -> verify;
 
     start[shape=pentagon];
-    parse[label="Parse regulation, output to demo server"];
-    verify[label="Verify regulation on demo server"];
+    auth[label="Handle authorization"];
+    parse[label="Parse regulation, output to staging server"];
+    wait[label="Wait for email notification that parsing is complete", shape=pentagon];
+    waitlive[label="Wait for email notification that parsing is complete", shape=pentagon];
+    verify[label="Verify regulation on staging server"];
     identify[label="Identify need for custom term addition", shape=pentagon];
     addterm[label="Add term to list"];
+    themedone[label="Save theme."];
     themeneed[label="Identify need for tweaks to theme of site", shape=pentagon];
+    termsadded[label="Save terms."];
     cssoverride[label="Change theme settings"];
     parselive[label="Parse regulation, output to live server"];
     siterebuildlive[label="Push theme changes to live server"];

@@ -9,7 +9,8 @@ digraph {
     }
 
     start -> parse;
-    parse -> verify;
+    parse -> wait;
+    wait -> verify;
     verify -> identify [label="Term definitions missing"];
     identify -> module [label="First new term"];
     identify -> addterm [label="New terms after the first"];
@@ -17,11 +18,19 @@ digraph {
     setuppy -> addterm;
     addterm -> parse;
 
-    verify -> parselive [label="Verified"];
-    parselive -> siterebuildlive;
-    siterebuildlive -> live;
+    verify -> parseauth [label="Verified"];
+    parseauth -> parselive;
+    parselive -> sitebuildauth;
+    sitebuildauth -> siterebuildlive;
+    parselive -> waitlive;
+    siterebuildlive -> waitlive;
+    waitlive -> live;
 
-    verify -> themeneed [label="Theme not correct"];
+    verify -> themeneed [label="Theme incorrect"];
+    verify -> themedone [label="Theme correct"];
+    themedone -> parseauth;
+    verify -> termsadded [label="All terms added"];
+    termsadded -> parseauth;
     themeneed -> cssoverride [label="First theme change"];
     themeneed -> csstweak [label="Theme changes after the first"];
     cssoverride -> csstweak;
@@ -32,16 +41,22 @@ digraph {
 
     start[shape=pentagon];
     parse[label="Parse regulation, output to staging server", style=filled];
+    wait[label="Wait for parser to finish running in console", style=filled];
+    waitlive[label="Wait for parser to finish running in console", style=filled];
     verify[label="Verify regulation on staging server"];
     identify[label="Identify need for custom term addition", shape=pentagon];
-    module[label="Create eregs_extensions module", style=filled];
-    setuppy[label="Tweak setup.py for eregs_extensions module to fit current project", style=filled];
+    module[label="Copy eregs_extensions module", style=filled];
+    setuppy[label="Tweak eregs_extensions module to fit current project", style=filled];
     addterm[label="Add term to list in custom Python", style=filled];
     themeneed[label="Identify need for tweaks to theme of site", shape=pentagon];
+    themedone[label="Add theme to version control.", style=filled];
+    termsadded[label="Add terms to version control.", style=filled];
     cssoverride[label="Create CSS file to override CSS file in default theme", style=filled];
     csstweak[label="Add custom override for CSS", style=filled];
     siterebuild[label="Rebuild staging server", style=filled];
+    parseauth[label="Handle authorization to send parsing output to live server", style=filled];
     parselive[label="Parse regulation, output to live server", style=filled];
+    sitebuildauth[label="Handle authorization to rebuild live site", style=filled];
     siterebuildlive[label="Rebuild site with new CSS, push to live server", style=filled];
     live[label="Verify theme and custom terms work on live server"];
 
