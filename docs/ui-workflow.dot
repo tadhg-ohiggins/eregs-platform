@@ -24,7 +24,7 @@ digraph {
     verify -> themedone [label="Theme correct"];
     themedone -> parselive;
     verify -> termsadded [label="All terms added"];
-    termsadde -> parselive;
+    termsadded -> parselive;
 
     verify -> themeneed [label="Theme incorrect"];
     themeneed -> cssoverride;
